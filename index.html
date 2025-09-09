@@ -188,11 +188,19 @@
         // Call the display handler with a slight delay to ensure the display-mode has been registered
         document.addEventListener('DOMContentLoaded', () => {
             console.log('DOMContentLoaded event fired.');
+            // Initial check with a small delay
             setTimeout(() => {
-                console.log('Checking app display after 100ms delay.');
+                console.log('Initial check after 500ms delay.');
                 handleAppDisplay();
-            }, 100);
+            }, 500);
         });
+
+        // Add a fallback check for the window load event
+        window.addEventListener('load', () => {
+            console.log('window load event fired. Performing fallback check.');
+            handleAppDisplay();
+        });
+
 
         // Check if the device is running iOS
         const isIOS = () => {
