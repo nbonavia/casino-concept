@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conceptual Casino App</title>
     <!-- PWA Manifest -->
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="manifest.json">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Inter font from Google Fonts -->
@@ -201,7 +201,8 @@
         // Register the Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js').then(registration => {
+                const serviceWorkerPath = `${document.baseURI}service-worker.js`;
+                navigator.serviceWorker.register(serviceWorkerPath).then(registration => {
                     console.log('Service Worker registered with scope:', registration.scope);
                 }).catch(err => {
                     console.log('Service Worker registration failed:', err);
