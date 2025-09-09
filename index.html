@@ -150,7 +150,7 @@
 
     <!-- Footer with Version Number -->
     <footer class="w-full text-center py-4 text-gray-400 text-xs mt-auto">
-        <p>Conceptual Casino App | Version 1.2.4</p>
+        <p>Conceptual Casino App | Version 1.2.5</p>
     </footer>
 
     <script>
@@ -165,6 +165,19 @@
         const isInstalled = () => {
             return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
         };
+        
+        // Function to handle the app's display based on installation status
+        const handleAppDisplay = () => {
+            if (isInstalled()) {
+                // Hide the install button container if the app is installed.
+                pwaInstallContainer.classList.add('hidden');
+                // Show the installed app banner
+                appInstalledBanner.classList.remove('hidden');
+            }
+        };
+
+        // Call the display handler immediately on page load
+        document.addEventListener('DOMContentLoaded', handleAppDisplay);
 
         // Check if the device is running iOS
         const isIOS = () => {
@@ -179,8 +192,10 @@
             // Store the event so we can trigger it later.
             deferredPrompt = e;
             // Only show the install button if the app is not already installed.
-            if (!isInstalled()) {
+            if (!isInstalled() && !isIOS()) {
                 pwaInstallContainer.classList.remove('hidden');
+            } else if (isIOS()) {
+                iosInstructions.classList.remove('hidden');
             }
         });
 
@@ -204,30 +219,9 @@
         // Event listener for when the app is successfully installed
         window.addEventListener('appinstalled', (e) => {
             console.log('App was installed');
-            // Hide the install button container if the user installs it.
-            pwaInstallContainer.classList.add('hidden');
-            // Show the installed app banner
-            appInstalledBanner.classList.remove('hidden');
+            // Call the display handler to update UI after a fresh install
+            handleAppDisplay();
         });
-
-        // Handle the page load based on the device
-        window.onload = () => {
-            if (isInstalled()) {
-                // If the app is already installed, hide the install button container
-                pwaInstallContainer.classList.add('hidden');
-                // Show the installed app banner
-                appInstalledBanner.classList.remove('hidden');
-            } else if (isIOS()) {
-                // If it's an iOS device and not installed, show the instructions
-                iosInstructions.classList.remove('hidden');
-            }
-        };
-        
-        // Check on page load to see if app is already installed
-        if (isInstalled()) {
-            pwaInstallContainer.classList.add('hidden');
-            appInstalledBanner.classList.remove('hidden');
-        }
 
         // Register the Service Worker
         if ('serviceWorker' in navigator) {
