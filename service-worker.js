@@ -2,8 +2,6 @@
 
 const CACHE_NAME = 'conceptual-casino-cache-v1';
 const urlsToCache = [
-  '/',
-  '/index.html',
   '/manifest.json'
 ];
 
