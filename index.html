@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conceptual Casino App</title>
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Inter font from Google Fonts -->
@@ -139,18 +141,6 @@
             </div>
         </section>
         
-        <!-- Fallback Message Container -->
-        <div class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-50 hidden" id="fallback-container">
-            <div class="bg-gray-800 p-6 rounded-xl shadow-lg max-w-sm w-full text-center border border-purple-600">
-                <p id="fallback-message" class="text-gray-200 text-lg">
-                    This feature is not supported on your browser or device.
-                </p>
-                <button class="mt-4 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-full" onclick="document.getElementById('fallback-container').classList.add('hidden')">
-                    Close
-                </button>
-            </div>
-        </div>
-
     </main>
 
     <script>
@@ -159,7 +149,6 @@
         const installButton = document.getElementById('install-button');
         const pwaInstallContainer = document.getElementById('pwa-install-container');
         const iosInstructions = document.getElementById('ios-instructions');
-        const fallbackMessageContainer = document.getElementById('fallback-container');
         
         // Check if the device is running iOS
         const isIOS = () => {
@@ -206,18 +195,19 @@
                 if (!isIOSInstalled()) {
                     iosInstructions.classList.remove('hidden');
                 }
-            } else {
-                // For other devices, check for PWA support.
-                // If beforeinstallprompt hasn't fired (e.g., desktop browser),
-                // and it's not iOS, show the fallback message.
-                setTimeout(() => {
-                    if (!deferredPrompt) {
-                        fallbackMessageContainer.classList.remove('hidden');
-                    }
-                }, 500); // Give a brief moment for the event to fire
-            }
+            } 
         };
 
+        // Register the Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js').then(registration => {
+                    console.log('Service Worker registered with scope:', registration.scope);
+                }).catch(err => {
+                    console.log('Service Worker registration failed:', err);
+                });
+            });
+        }
     </script>
 </body>
 </html>
