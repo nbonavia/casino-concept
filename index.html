@@ -150,7 +150,7 @@
 
     <!-- Footer with Version Number -->
     <footer class="w-full text-center py-4 text-gray-400 text-xs mt-auto">
-        <p>Conceptual Casino App | Version 1.3.1</p>
+        <p>Conceptual Casino App | Version 1.3.2</p>
     </footer>
 
     <script>
@@ -161,18 +161,15 @@
         const pwaInstallContainer = document.getElementById('pwa-install-container');
         const iosInstructions = document.getElementById('ios-instructions');
         const appInstalledBanner = document.getElementById('app-installed-banner');
-        
-        // Function to check if the app is currently running in a standalone display mode
+
         const isCurrentlyStandalone = () => {
             return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
         };
 
-        // Function to check if the app has been installed before
         const hasBeenInstalledBefore = () => {
             return localStorage.getItem('pwa-installed') === 'true';
         };
-        
-        // Function to handle the app's display based on installation status
+
         const handleAppDisplay = () => {
             console.log('handleAppDisplay function called.');
 
@@ -180,37 +177,43 @@
             const hasInstalledFlag = hasBeenInstalledBefore();
             console.log(`isStandalone: ${isStandalone}, hasInstalledFlag: ${hasInstalledFlag}`);
 
-            // Show banner if running in standalone mode OR if the app was installed and we are in an app-like environment.
-            if (isStandalone || hasInstalledFlag) {
-                console.log('App is running in a standalone-like environment. Showing banner.');
+            if (isStandalone) {
+                console.log('App is running in standalone mode. Showing banner.');
                 appInstalledBanner.classList.remove('hidden');
                 pwaInstallContainer.classList.add('hidden');
                 iosInstructions.classList.add('hidden');
             } else {
-                console.log('App has not been installed. Showing install options.');
+                console.log('App is running in a browser tab. Hiding banner.');
                 appInstalledBanner.classList.add('hidden');
                 
-                const isIOS = () => {
-                    const userAgent = window.navigator.userAgent.toLowerCase();
-                    return /iphone|ipad|ipod/.test(userAgent);
-                };
-                
-                if (!isIOS() && deferredPrompt) {
-                    pwaInstallContainer.classList.remove('hidden');
-                } else if (isIOS()) {
-                    iosInstructions.classList.remove('hidden');
+                if (hasInstalledFlag) {
+                    console.log('App has been installed. Hiding install options.');
+                    pwaInstallContainer.classList.add('hidden');
+                    iosInstructions.classList.add('hidden');
+                } else {
+                    console.log('App has not been installed. Showing install options.');
+                    const isIOS = () => {
+                        const userAgent = window.navigator.userAgent.toLowerCase();
+                        return /iphone|ipad|ipod/.test(userAgent);
+                    };
+                    
+                    if (!isIOS() && deferredPrompt) {
+                        pwaInstallContainer.classList.remove('hidden');
+                    } else if (isIOS()) {
+                        iosInstructions.classList.remove('hidden');
+                    }
                 }
             }
         };
 
-        // Call the display handler after the DOM content is loaded
         document.addEventListener('DOMContentLoaded', () => {
             console.log('DOMContentLoaded event fired. Performing initial check.');
+            // Initial check
             handleAppDisplay();
+            // A small delay to handle the timing issue on standalone app launch
+            setTimeout(handleAppDisplay, 500); 
         });
 
-
-        // This event is fired by the browser on PWA-supported devices
         window.addEventListener('beforeinstallprompt', (e) => {
             console.log('beforeinstallprompt event fired.');
             e.preventDefault();
@@ -218,7 +221,6 @@
             handleAppDisplay();
         });
 
-        // Event listener for the install button click
         installButton.addEventListener('click', (e) => {
             pwaInstallContainer.classList.add('hidden');
             if (deferredPrompt) {
@@ -235,14 +237,12 @@
             }
         });
 
-        // Event listener for when the app is successfully installed
         window.addEventListener('appinstalled', (e) => {
             console.log('App was installed');
             localStorage.setItem('pwa-installed', 'true');
             handleAppDisplay();
         });
 
-        // Register the Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const serviceWorkerPath = `${document.baseURI}service-worker.js`;
