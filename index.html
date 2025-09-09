@@ -150,7 +150,7 @@
 
     <!-- Footer with Version Number -->
     <footer class="w-full text-center py-4 text-gray-400 text-xs mt-auto">
-        <p>Conceptual Casino App | Version 1.2.5</p>
+        <p>Conceptual Casino App | Version 1.2.7</p>
     </footer>
 
     <script>
@@ -176,8 +176,10 @@
             }
         };
 
-        // Call the display handler immediately on page load
-        document.addEventListener('DOMContentLoaded', handleAppDisplay);
+        // Call the display handler with a slight delay to ensure the display-mode has been registered
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(handleAppDisplay, 100);
+        });
 
         // Check if the device is running iOS
         const isIOS = () => {
