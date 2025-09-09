@@ -150,7 +150,7 @@
 
     <!-- Footer with Version Number -->
     <footer class="w-full text-center py-4 text-gray-400 text-xs mt-auto">
-        <p>Conceptual Casino App | Version 1.3.0</p>
+        <p>Conceptual Casino App | Version 1.3.1</p>
     </footer>
 
     <script>
@@ -180,32 +180,25 @@
             const hasInstalledFlag = hasBeenInstalledBefore();
             console.log(`isStandalone: ${isStandalone}, hasInstalledFlag: ${hasInstalledFlag}`);
 
-            if (isStandalone) {
-                console.log('App is running in standalone mode. Showing banner.');
+            // Show banner if running in standalone mode OR if the app was installed and we are in an app-like environment.
+            if (isStandalone || hasInstalledFlag) {
+                console.log('App is running in a standalone-like environment. Showing banner.');
                 appInstalledBanner.classList.remove('hidden');
                 pwaInstallContainer.classList.add('hidden');
                 iosInstructions.classList.add('hidden');
             } else {
-                console.log('App is running in a browser tab. Hiding banner.');
+                console.log('App has not been installed. Showing install options.');
                 appInstalledBanner.classList.add('hidden');
                 
-                // Only show install prompt if it hasn't been installed before
-                if (!hasInstalledFlag) {
-                    const isIOS = () => {
-                        const userAgent = window.navigator.userAgent.toLowerCase();
-                        return /iphone|ipad|ipod/.test(userAgent);
-                    };
-                    
-                    if (!isIOS() && deferredPrompt) {
-                        pwaInstallContainer.classList.remove('hidden');
-                    } else if (isIOS()) {
-                        iosInstructions.classList.remove('hidden');
-                    }
-                } else {
-                    // App is installed but not in standalone mode, so we hide everything
-                    console.log('App has been installed before, but not in standalone mode. Hiding install options.');
-                    pwaInstallContainer.classList.add('hidden');
-                    iosInstructions.classList.add('hidden');
+                const isIOS = () => {
+                    const userAgent = window.navigator.userAgent.toLowerCase();
+                    return /iphone|ipad|ipod/.test(userAgent);
+                };
+                
+                if (!isIOS() && deferredPrompt) {
+                    pwaInstallContainer.classList.remove('hidden');
+                } else if (isIOS()) {
+                    iosInstructions.classList.remove('hidden');
                 }
             }
         };
