@@ -33,6 +33,11 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
+    <!-- App Installed Banner -->
+    <div id="app-installed-banner" class="hidden w-full bg-green-500 text-white text-center py-2 px-4 text-sm font-semibold sticky top-0 z-50">
+        You are running the installed version of the app.
+    </div>
+
     <!-- Top Navigation Section -->
     <header class="w-full bg-black bg-opacity-50 backdrop-blur-md shadow-lg text-white fixed top-0 left-0 z-50">
         <nav class="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -149,6 +154,7 @@
         const installButton = document.getElementById('install-button');
         const pwaInstallContainer = document.getElementById('pwa-install-container');
         const iosInstructions = document.getElementById('ios-instructions');
+        const appInstalledBanner = document.getElementById('app-installed-banner');
         
         // Function to check if the app is already installed
         const isInstalled = () => {
@@ -202,6 +208,8 @@
             if (isInstalled()) {
                 // If the app is already installed, hide the install button container
                 pwaInstallContainer.classList.add('hidden');
+                // Show the installed app banner
+                appInstalledBanner.classList.remove('hidden');
             } else if (isIOS()) {
                 // If it's an iOS device and not installed, show the instructions
                 iosInstructions.classList.remove('hidden');
