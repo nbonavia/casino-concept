@@ -150,15 +150,15 @@
         const pwaInstallContainer = document.getElementById('pwa-install-container');
         const iosInstructions = document.getElementById('ios-instructions');
         
+        // Function to check if the app is already installed
+        const isInstalled = () => {
+            return window.matchMedia('(display-mode: standalone)').matches;
+        };
+
         // Check if the device is running iOS
         const isIOS = () => {
             const userAgent = window.navigator.userAgent.toLowerCase();
             return /iphone|ipad|ipod/.test(userAgent);
-        };
-
-        // Check if the app is already installed on iOS
-        const isIOSInstalled = () => {
-            return isIOS() && window.matchMedia('(display-mode: standalone)').matches;
         };
 
         // This event is fired by the browser on PWA-supported devices
@@ -168,7 +168,9 @@
             // Store the event so we can trigger it later.
             deferredPrompt = e;
             // Show the install button container.
-            pwaInstallContainer.classList.remove('hidden');
+            if (!isInstalled()) {
+                pwaInstallContainer.classList.remove('hidden');
+            }
         });
 
         // Event listener for the install button click
@@ -190,12 +192,13 @@
 
         // Handle the page load based on the device
         window.onload = () => {
-            if (isIOS()) {
-                // If it's an iOS device, show the instructions
-                if (!isIOSInstalled()) {
-                    iosInstructions.classList.remove('hidden');
-                }
-            } 
+            if (isInstalled()) {
+                // If the app is already installed, hide the install button container
+                pwaInstallContainer.classList.add('hidden');
+            } else if (isIOS()) {
+                // If it's an iOS device and not installed, show the instructions
+                iosInstructions.classList.remove('hidden');
+            }
         };
 
         // Register the Service Worker
