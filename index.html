@@ -150,7 +150,7 @@
 
     <!-- Footer with Version Number -->
     <footer class="w-full text-center py-4 text-gray-400 text-xs mt-auto">
-        <p>Conceptual Casino App | Version 1.2.8</p>
+        <p>Conceptual Casino App | Version 1.2.9</p>
     </footer>
 
     <script>
@@ -167,8 +167,9 @@
         const isInstalled = () => {
             const isPWA = window.matchMedia('(display-mode: standalone)').matches;
             const isIOSStandalone = window.navigator.standalone;
-            console.log(`isPWA: ${isPWA}, isIOSStandalone: ${isIOSStandalone}`);
-            return isPWA || isIOSStandalone;
+            const isSessionInstalled = sessionStorage.getItem('pwa-installed') === 'true';
+            console.log(`isPWA: ${isPWA}, isIOSStandalone: ${isIOSStandalone}, isSessionInstalled: ${isSessionInstalled}`);
+            return isPWA || isIOSStandalone || isSessionInstalled;
         };
         
         // Function to handle the app's display based on installation status
@@ -185,19 +186,9 @@
             }
         };
 
-        // Call the display handler with a slight delay to ensure the display-mode has been registered
+        // Call the display handler after the DOM content is loaded
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('DOMContentLoaded event fired.');
-            // Initial check with a small delay
-            setTimeout(() => {
-                console.log('Initial check after 500ms delay.');
-                handleAppDisplay();
-            }, 500);
-        });
-
-        // Add a fallback check for the window load event
-        window.addEventListener('load', () => {
-            console.log('window load event fired. Performing fallback check.');
+            console.log('DOMContentLoaded event fired. Performing initial check.');
             handleAppDisplay();
         });
 
@@ -235,6 +226,12 @@
                 // Check the user's choice
                 deferredPrompt.userChoice.then((choiceResult) => {
                     console.log('User choice:', choiceResult.outcome);
+                    // If the user accepts, set the sessionStorage flag
+                    if (choiceResult.outcome === 'accepted') {
+                        sessionStorage.setItem('pwa-installed', 'true');
+                        console.log('User accepted installation. Session flag set.');
+                        handleAppDisplay();
+                    }
                     // Reset deferredPrompt variable, as it can only be used once.
                     deferredPrompt = null;
                 });
@@ -244,7 +241,8 @@
         // Event listener for when the app is successfully installed
         window.addEventListener('appinstalled', (e) => {
             console.log('App was installed');
-            // Call the display handler to update UI after a fresh install
+            // Set the sessionStorage flag and update the UI
+            sessionStorage.setItem('pwa-installed', 'true');
             handleAppDisplay();
         });
 
