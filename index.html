@@ -150,7 +150,7 @@
 
     <!-- Footer with Version Number -->
     <footer class="w-full text-center py-4 text-gray-400 text-xs mt-auto">
-        <p>Conceptual Casino App | Version 1.2.9</p>
+        <p>Conceptual Casino App | Version 1.2.10</p>
     </footer>
 
     <script>
@@ -167,9 +167,9 @@
         const isInstalled = () => {
             const isPWA = window.matchMedia('(display-mode: standalone)').matches;
             const isIOSStandalone = window.navigator.standalone;
-            const isSessionInstalled = sessionStorage.getItem('pwa-installed') === 'true';
-            console.log(`isPWA: ${isPWA}, isIOSStandalone: ${isIOSStandalone}, isSessionInstalled: ${isSessionInstalled}`);
-            return isPWA || isIOSStandalone || isSessionInstalled;
+            const hasInstalledFlag = localStorage.getItem('pwa-installed') === 'true';
+            console.log(`isPWA: ${isPWA}, isIOSStandalone: ${isIOSStandalone}, hasInstalledFlag: ${hasInstalledFlag}`);
+            return isPWA || isIOSStandalone || hasInstalledFlag;
         };
         
         // Function to handle the app's display based on installation status
@@ -182,7 +182,7 @@
                 // Show the installed app banner
                 appInstalledBanner.classList.remove('hidden');
             } else {
-                console.log('App not detected as installed.');
+                console.log('App not detected as installed. Showing install options.');
             }
         };
 
@@ -226,10 +226,10 @@
                 // Check the user's choice
                 deferredPrompt.userChoice.then((choiceResult) => {
                     console.log('User choice:', choiceResult.outcome);
-                    // If the user accepts, set the sessionStorage flag
+                    // If the user accepts, set the localStorage flag
                     if (choiceResult.outcome === 'accepted') {
-                        sessionStorage.setItem('pwa-installed', 'true');
-                        console.log('User accepted installation. Session flag set.');
+                        localStorage.setItem('pwa-installed', 'true');
+                        console.log('User accepted installation. Local storage flag set.');
                         handleAppDisplay();
                     }
                     // Reset deferredPrompt variable, as it can only be used once.
@@ -241,8 +241,8 @@
         // Event listener for when the app is successfully installed
         window.addEventListener('appinstalled', (e) => {
             console.log('App was installed');
-            // Set the sessionStorage flag and update the UI
-            sessionStorage.setItem('pwa-installed', 'true');
+            // Set the localStorage flag and update the UI
+            localStorage.setItem('pwa-installed', 'true');
             handleAppDisplay();
         });
 
