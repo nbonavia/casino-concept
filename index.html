@@ -39,7 +39,7 @@
     </div>
 
     <!-- Top Navigation Section -->
-    <header class="w-full bg-black bg-opacity-50 backdrop-blur-md shadow-lg text-white fixed top-0 left-0 z-50">
+    <header class="w-full bg-black bg-opacity-50 backdrop-blur-md shadow-lg text-white top-0 left-0 z-50">
         <nav class="container mx-auto px-4 py-4 flex items-center justify-between">
             <a href="#" class="text-xl sm:text-3xl font-bold text-indigo-400">Conceptual<span class="text-purple-400">Casino</span></a>
             <div class="flex items-center space-x-2 sm:space-x-6">
@@ -150,7 +150,7 @@
 
     <!-- Footer with Version Number -->
     <footer class="w-full text-center py-4 text-gray-400 text-xs mt-auto">
-        <p>Conceptual Casino App | Version 1.2.2</p>
+        <p>Conceptual Casino App | Version 1.2.3</p>
     </footer>
 
     <script>
@@ -235,6 +235,18 @@
                 const serviceWorkerPath = `${document.baseURI}service-worker.js`;
                 navigator.serviceWorker.register(serviceWorkerPath).then(registration => {
                     console.log('Service Worker registered with scope:', registration.scope);
+
+                    // Add a listener for the updatefound event
+                    registration.addEventListener('updatefound', () => {
+                        const installingWorker = registration.installing;
+                        installingWorker.addEventListener('statechange', () => {
+                            if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                console.log('New content is available, forcing reload to apply.');
+                                // Force a page reload to use the new service worker
+                                window.location.reload();
+                            }
+                        });
+                    });
                 }).catch(err => {
                     console.log('Service Worker registration failed:', err);
                 });
