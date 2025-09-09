@@ -150,10 +150,12 @@
 
     <!-- Footer with Version Number -->
     <footer class="w-full text-center py-4 text-gray-400 text-xs mt-auto">
-        <p>Conceptual Casino App | Version 1.2.7</p>
+        <p>Conceptual Casino App | Version 1.2.8</p>
     </footer>
 
     <script>
+        console.log('Script has started running.');
+
         // Use a variable to store the beforeinstallprompt event.
         let deferredPrompt;
         const installButton = document.getElementById('install-button');
@@ -163,22 +165,33 @@
         
         // Function to check if the app is already installed
         const isInstalled = () => {
-            return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+            const isPWA = window.matchMedia('(display-mode: standalone)').matches;
+            const isIOSStandalone = window.navigator.standalone;
+            console.log(`isPWA: ${isPWA}, isIOSStandalone: ${isIOSStandalone}`);
+            return isPWA || isIOSStandalone;
         };
         
         // Function to handle the app's display based on installation status
         const handleAppDisplay = () => {
+            console.log('handleAppDisplay function called.');
             if (isInstalled()) {
+                console.log('App detected as installed. Showing banner.');
                 // Hide the install button container if the app is installed.
                 pwaInstallContainer.classList.add('hidden');
                 // Show the installed app banner
                 appInstalledBanner.classList.remove('hidden');
+            } else {
+                console.log('App not detected as installed.');
             }
         };
 
         // Call the display handler with a slight delay to ensure the display-mode has been registered
         document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(handleAppDisplay, 100);
+            console.log('DOMContentLoaded event fired.');
+            setTimeout(() => {
+                console.log('Checking app display after 100ms delay.');
+                handleAppDisplay();
+            }, 100);
         });
 
         // Check if the device is running iOS
@@ -189,6 +202,7 @@
         
         // This event is fired by the browser on PWA-supported devices
         window.addEventListener('beforeinstallprompt', (e) => {
+            console.log('beforeinstallprompt event fired.');
             // Prevent the default browser prompt
             e.preventDefault();
             // Store the event so we can trigger it later.
@@ -208,6 +222,7 @@
             
             // Show the browser installation prompt
             if (deferredPrompt) {
+                console.log('Launching installation prompt.');
                 deferredPrompt.prompt();
                 // Check the user's choice
                 deferredPrompt.userChoice.then((choiceResult) => {
